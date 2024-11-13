@@ -1,0 +1,289 @@
+openapi: 3.0.3
+info:
+  title: Swagger Swapi-Serverless
+  description: |-
+    Esta es la documentacion de los endpoints creados para la integracion de swapi.
+  contact:
+    email: ing.jesus.v.g@gmail.com
+  license:
+    name: Apache 2.0
+    url: http://www.apache.org/licenses/LICENSE-2.0.html
+  version: 1.0.0
+externalDocs:
+  description: Documentacion de swapi
+  url: https://swapi.py4e.com/documentation
+servers:
+  - url: https://1c8a1rfjce.execute-api.us-east-1.amazonaws.com
+tags:
+  - name: swapi
+    description: Endpoints que permien consultar datos de swapi
+  - name: dynamodb
+    description: Endpoints que permien guardar y consultar datos de dynamodb
+paths:
+  /get-info-person/{id}:
+    get:
+      tags:
+        - swapi
+      summary: Busca un personaje de las peliculas de star wars
+      description: Busca por id y puede obtener información mas detallada con una query
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema: 
+            type: integer
+            minimum: 1
+      responses:
+        '200':
+          description: Info encontrada
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Person' 
+        '500':
+          description: Error interno
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/InternalError'
+  /get-info-film/{id}:
+    get:
+      tags:
+        - swapi
+      summary: Busca un personaje de las peliculas de star wars
+      description: Busca por id
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema: 
+            type: integer
+            minimum: 1
+      responses:
+        '200':
+          description: Info encontrada
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Film' 
+        '500':
+          description: Error interno
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/InternalError'
+  /user-favorite-film/{id}:
+    get:
+      tags:
+        - dynamodb
+      summary: Busca un usuario y su pelicula favorita
+      description: Busca por userId
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema: 
+            type: integer
+            minimum: 1
+      responses:
+        '200':
+          description: Info encontrada
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User' 
+  /user-favorite-film:
+    post:
+      tags:
+        - dynamodb
+      summary: Busca un usuario y su pelicula favorita
+      description: Busca por userId
+      parameters:
+        - in: body
+          name: user
+          schema: 
+            $ref: '#/components/schemas/User' 
+      responses:
+        '200':
+          description: Info guardada
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User' 
+        '400':
+          description: Body incorrecto
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SaveError'
+              examples:
+                userId:
+                  $ref: '#/components/examples/userId'
+                name:
+                  $ref: '#/components/examples/name'
+                filmInfo:
+                  $ref: '#/components/examples/filmInfo'
+        '500':
+          description: Error interno
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/SaveError'
+              examples:
+                internal:
+                  $ref: '#/components/examples/internal'
+components:
+  schemas:
+    User:
+      type: object
+      properties:
+        userId:
+          type: string
+          example: abc
+        name:
+          type: string
+          example: Jhon Dae
+        filmId:
+          type: string
+          example: 1
+        filmTitle:
+          type: string
+          example: A new Hope
+    Person:
+      type: object
+      properties:
+        nombre:
+          type: string
+          example: Luke Skywalker
+        altura:
+          type: string
+          example: 172
+        peso:
+          type: string
+          example: 77
+        color_cabello:
+          type: string
+          example: blond
+        color_piel:
+          type: string
+          example: fair
+        color_ojos:
+          type: string
+          example: blue
+        año_nacimiento:
+          type: string
+          example: 19BBY
+        genero:
+          type: string
+          example: male
+        planeta_origen:
+          type: string
+          example: https://swapi.py4e.com/api/planets/1/
+        peliculas:
+          type: array
+          items:
+            type: string
+            example: https://swapi.py4e.com/api/films/1/
+        especies:
+          type: array
+          items:
+            type: string
+            example: https://swapi.py4e.com/api/films/1/
+        vehiculos:
+          type: array
+          items:
+            type: string
+            example: https://swapi.py4e.com/api/films/1/
+        naves:
+          type: array
+          items:
+            type: string
+            example: https://swapi.py4e.com/api/films/1/
+        fecha_creacion:
+          type: string
+          example: 2014-12-09T13:50:51.644000Z
+        fecha_actualizacion:
+          type: string
+          example: 2014-12-20T21:17:56.891000Z
+        url:
+          type: string
+          example: https://swapi.py4e.com/api/people/1/
+    Film:
+      type: object
+      properties:
+        titulo:
+          type: string
+          example: A New Hope
+        id_episodio:
+          type: number
+          example: 4
+        introduccion:
+          type: string
+          example: It is a period of civil war.\r\nRebel spaceships, striking\r\nfrom a hidden base
+        director:
+          type: string
+          example: George Lucas
+        productor:
+          type: string
+          example: Gary Kurtz, Rick McCallum
+        fecha_lanzamiento:
+          type: string
+          example: 1977-05-25
+        personajes:
+          type: array
+          items:
+            type: string
+            example: https://swapi.py4e.com/api/films/1/
+        planetas:
+          type: array
+          items:
+            type: string
+            example: https://swapi.py4e.com/api/films/1/
+        naves:
+          type: array
+          items:
+            type: string
+            example: https://swapi.py4e.com/api/films/1/
+        vehiculos:
+          type: array
+          items:
+            type: string
+            example: https://swapi.py4e.com/api/films/1/
+        especies:
+          type: array
+          items:
+            type: string
+            example: https://swapi.py4e.com/api/films/1/
+        fecha_creacion:
+          type: string
+          example: 2014-12-09T13:50:51.644000Z
+        fecha_actualizacion:
+          type: string
+          example: 2014-12-20T21:17:56.891000Z
+        url:
+          type: string
+          example: https://swapi.py4e.com/api/film/1/
+    InternalError:
+      type: object
+      properties:
+        mensaje:
+          type: string
+          example: Internal Error
+    SaveError:
+      type: object
+      properties:
+        error:
+          type: string
+  examples:
+    userId:
+      value:
+        error: '"userId" must be a string'
+    name:
+      value:
+        error: '"name" must be a string'
+    filmInfo:
+      value:
+        error: 'missing filmId or filmTitle'
+    internal:
+      value:
+        error: 'Could not create user'
